@@ -1,1 +1,4 @@
 password_vault.db
+dist/password_vault.db
+build
+
