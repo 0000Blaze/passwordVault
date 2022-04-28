@@ -12,7 +12,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
 
 backend = default_backend()
-salt =b'2444'
+salt = b'2444'
 
 kdf=PBKDF2HMAC(
     algorithm=hashes.SHA256(),
@@ -24,10 +24,10 @@ kdf=PBKDF2HMAC(
 
 encryptionKey = 0
 
-def encrypt(message:bytes, key:bytes) -> bytes:
+def encrypt(message: bytes, key: bytes) -> bytes:
     return Fernet(key).encrypt(message)
 
-def decrypt(message:bytes,token:bytes)->bytes:
+def decrypt(message: bytes, token: bytes) -> bytes:
     return Fernet(token).decrypt(message)
 
 #Database
@@ -204,7 +204,9 @@ def loginScreen():
             lbl1.config(text="Wrong password")
 
     def resetPassword():
-        resetScreen()
+        # resetScreen()
+        lbl1.config(text="Sorry this feature has some problems")
+        pass
 
     btn = Button(window,text="Submit",command=checkPassword)
     btn.pack(pady=10)
@@ -220,10 +222,12 @@ def passwordVault():
         text1="Website"
         text2="Username"
         text3="Password"
+        
+        global encryptionKey
 
-        website=encrypt(popUp(text1).encode(),encryptionKey)
-        username=encrypt(popUp(text2).encode(),encryptionKey)
-        password=encrypt(popUp(text3).encode(),encryptionKey)
+        website = encrypt(popUp(text1).encode() , encryptionKey)
+        username = encrypt(popUp(text2).encode() , encryptionKey)
+        password = encrypt(popUp(text3).encode() , encryptionKey)
 
         insert_fields ="""INSERT INTO vault(website,username,password)
         VALUES(?,?,?)"""
@@ -266,11 +270,11 @@ def passwordVault():
             if (len(array1) == 0):
                 break
             
-            lbl1 = Label(window,text=(decrypt(array1[i][1],encryptionKey)),font=("Helvetica",12))
+            lbl1 = Label(window,text=(decrypt(array1[i][1] , encryptionKey)),font=("Helvetica",12))
             lbl1.grid(column=0,row= i+3)
-            lbl2 = Label(window,text=(decrypt(array1[i][2],encryptionKey)),font=("Helvetica",12))
+            lbl2 = Label(window,text=(decrypt(array1[i][2] , encryptionKey)),font=("Helvetica",12))
             lbl2.grid(column=1,row= i+3)
-            lbl3 = Label(window,text=(decrypt(array1[i][3],encryptionKey)),font=("Helvetica",12))
+            lbl3 = Label(window,text=(decrypt(array1[i][3] , encryptionKey)),font=("Helvetica",12))
             lbl3.grid(column=2,row= i+3)
 
             btn = Button(window,text="Delete",command=partial(removeEntry,array1[i][0]))
